@@ -6,11 +6,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameplayWidget _gameplayWidgetPrefab;
-
     [SerializeField] private float _playerSpeed = 5f;
+    [SerializeField] public ViewCamera _viewCameraPrefab;
+
     private GameplayWidget _gameplayWidget;
     private CharacterController _characterController;
     private Animator _animator;
+    public ViewCamera _viewCamera;
 
     private Vector2 _moveInput;
 
@@ -19,9 +21,9 @@ public class Player : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _gameplayWidget = Instantiate(_gameplayWidgetPrefab);
-        Debug.Log($"game play widget is: {_gameplayWidget}");
-        Debug.Log($"move stick is: {_gameplayWidget.MoveStick}");
         _gameplayWidget.MoveStick.OnInputUpdated += InputUpdated;
+        _viewCamera = Instantiate(_viewCameraPrefab);
+        _viewCamera.SetFollowParent(transform);
 
     }
 
