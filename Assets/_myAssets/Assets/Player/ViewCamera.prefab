@@ -248,4 +248,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pitchTransform: {fileID: 6605039920982008162}
   viewCamera: {fileID: 6540264894865604925}
-  armLengeth: -6.94
+  armLengeth: 9
+  cameraTurnSpeed: 30

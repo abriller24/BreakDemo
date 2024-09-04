@@ -9,12 +9,14 @@ public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler 
     public event InputUpdatedDelegate OnInputUpdated;
     [SerializeField] private RectTransform rangeTransform;
     [SerializeField] private RectTransform thumbStickTransform;
+    [SerializeField] private float deadZone = 0.2f;
 
     private float _range;
 
     private void Awake()
     {
         _range = rangeTransform.sizeDelta.x / 2f;
+        deadZone = deadZone * deadZone;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -34,7 +36,11 @@ public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler 
     {
         Vector2 offset = Vector2.ClampMagnitude(eventData.position - eventData.pressPosition, _range);
         thumbStickTransform.position = eventData.pressPosition + offset;
-        Debug.Log($"offset is: {offset}");
+        Vector2 input = offset / _range;
+
+        if (input.sqrMagnitude < deadZone)
+            return;
+
         OnInputUpdated?.Invoke(offset/_range);
     }
     
