@@ -2,18 +2,22 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SocketManager))]
+[RequireComponent(typeof(InventoryComponent))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameplayWidget _gameplayWidgetPrefab;
-    [SerializeField] private float _playerSpeed = 10f;
+    [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float bodyTurnSpeed = 10f;
-    [SerializeField] public ViewCamera _viewCameraPrefab;
+    [SerializeField] public ViewCamera viewCameraPrefab;
 
+    [SerializeField] private float animTurnLerpScale = 5.0f;
     private GameplayWidget _gameplayWidget;
     private CharacterController _characterController;
     public ViewCamera _viewCamera;
 
     private Animator _animator;
+    private float _animTurnSpeed;
     private Vector2 _moveInput;
     private Vector2 _aimInput;
 
@@ -29,7 +33,7 @@ public class Player : MonoBehaviour
         _gameplayWidget = Instantiate(_gameplayWidgetPrefab);
         _gameplayWidget.MoveStick.OnInputUpdated += MoveInputUpdated;
         _gameplayWidget.AimStick.OnInputUpdated += AimInputUpdated;
-        _viewCamera = Instantiate(_viewCameraPrefab);
+        _viewCamera = Instantiate(viewCameraPrefab);
         _viewCamera.SetFollowParent(transform);
 
     }
@@ -47,7 +51,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Vector3 moveDir = _viewCamera.InputToWorldDir( _moveInput );
-        _characterController.Move((moveDir) * (_playerSpeed * Time.deltaTime));
+        _characterController.Move((moveDir) * (playerSpeed * Time.deltaTime));
         
         Vector3 aimDir = _viewCamera.InputToWorldDir(_aimInput);
         if (aimDir == Vector3.zero)
@@ -65,7 +69,8 @@ public class Player : MonoBehaviour
             angleDelta = Vector3.SignedAngle(transform.forward,prevDir,Vector3.up);
         }
 
-        _animator.SetFloat(animTurnID, angleDelta / Time.deltaTime);
+        _animTurnSpeed = Mathf.Lerp(_animTurnSpeed, angleDelta/Time.deltaTime, Time.deltaTime * animTurnLerpScale);
+        _animator.SetFloat(animTurnID, _animTurnSpeed);
 
         float animFwdAmt = Vector3.Dot(moveDir, transform.forward);
         float animRgtAmt = Vector3.Dot(moveDir, transform.right);

@@ -48,9 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameplayWidgetPrefab: {fileID: -4556835323593159677, guid: f6c7f94e734682d49b4547fb0a81c259, type: 3}
-  _playerSpeed: 5
+  playerSpeed: 10
   bodyTurnSpeed: 10
-  _viewCameraPrefab: {fileID: 5079545642667402132, guid: 634ba59a25b055a479c00c4b4d2ee5ec, type: 3}
+  viewCameraPrefab: {fileID: 5079545642667402132, guid: 634ba59a25b055a479c00c4b4d2ee5ec, type: 3}
+  animTurnLerpScale: 5
   _viewCamera: {fileID: 5079545642667402132, guid: 634ba59a25b055a479c00c4b4d2ee5ec, type: 3}
 --- !u!143 &7716360095218346125
 CharacterController:
