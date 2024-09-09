@@ -2,9 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler , IDragHandler
+public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler , IDragHandler , IPointerClickHandler
 {
     public delegate void InputUpdatedDelegate(Vector2 inputVal);
+
+    InventoryComponent inventoryComponent;
 
     public event InputUpdatedDelegate OnInputUpdated;
     [SerializeField] private RectTransform rangeTransform;
@@ -17,6 +19,10 @@ public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler 
     {
         _range = rangeTransform.sizeDelta.x / 2f;
         deadZone = deadZone * deadZone;
+    }
+    private void Start()
+    {
+        inventoryComponent = GetComponent<InventoryComponent>();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -43,6 +49,15 @@ public class Joystick : MonoBehaviour , IPointerDownHandler , IPointerUpHandler 
 
         OnInputUpdated?.Invoke(offset/_range);
     }
-    
-    
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("Equip next weapon");
+        inventoryComponent.EquipNextWeapon();
+    }
+    public void OnMouseDown()
+    {
+        Debug.Log("Equip next weapon");
+        inventoryComponent.EquipNextWeapon();
+    }
 }

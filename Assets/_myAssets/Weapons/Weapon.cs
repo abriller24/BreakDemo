@@ -5,6 +5,7 @@ public abstract class Weapon : MonoBehaviour, ISocketInterface
 //public abstract class means it cannot be inherited by another object
 {
     [SerializeField] string attachSocketName;
+    [SerializeField] AnimatorOverrideController overrideController;
     public GameObject Owner
     {
         get;
@@ -25,6 +26,11 @@ public abstract class Weapon : MonoBehaviour, ISocketInterface
     public void Equip()
     {
         gameObject.SetActive(true);
+        Animator ownerAnimator = Owner.GetComponent<Animator>();
+        if (ownerAnimator)
+        {
+            ownerAnimator.runtimeAnimatorController = overrideController;
+        }
     }
 
     public void UnEquip()

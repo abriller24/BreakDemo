@@ -17,7 +17,7 @@ public class AttachSocket : MonoBehaviour
 
     public void Attch(ISocketInterface socketInterface)
     {
-        socketInterface.GetGameObject().transform.parent = transform.parent;
+        socketInterface.GetGameObject().transform.parent = transform;
         socketInterface.GetGameObject().transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
 }
