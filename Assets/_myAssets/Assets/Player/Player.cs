@@ -1,37 +1,62 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SocketManager))]
+[RequireComponent(typeof(InventoryComponent))]
+[RequireComponent(typeof(HealthComponent))] 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameplayWidget _gameplayWidgetPrefab;
-    [SerializeField] private float _playerSpeed = 10f;
+    [SerializeField] private GameplayWidget gameplayWidgetPrefab;
+    [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float bodyTurnSpeed = 10f;
-    [SerializeField] public ViewCamera _viewCameraPrefab;
+    [SerializeField] private ViewCamera viewCameraPrefab;
 
+    [SerializeField] private float animTurnLerpScale = 5.0f;
     private GameplayWidget _gameplayWidget;
     private CharacterController _characterController;
-    public ViewCamera _viewCamera;
+    private InventoryComponent _inventoryComponent;
+    private ViewCamera _viewCamera;
 
     private Animator _animator;
+    private float _animTurnSpeed;
     private Vector2 _moveInput;
     private Vector2 _aimInput;
 
-    static int animFwdID = Animator.StringToHash("ForwardAmt");
-    static int animRightID = Animator.StringToHash("RightAmt");
-    static int animTurnID = Animator.StringToHash("TurnAmt");
-
+    private static readonly int animFwdID = Animator.StringToHash("ForwardAmt");
+    private static readonly int animRightID = Animator.StringToHash("RightAmt");
+    private static readonly int animTurnID = Animator.StringToHash("TurnAmt");
+    private static readonly int SwitchWeaponId = Animator.StringToHash("SwitchWeapon");
+    private static readonly int FireID = Animator.StringToHash("Firing");
 
     private void Awake() 
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
-        _gameplayWidget = Instantiate(_gameplayWidgetPrefab);
+        _inventoryComponent = GetComponent<InventoryComponent>();
+        _gameplayWidget = Instantiate(gameplayWidgetPrefab);
         _gameplayWidget.MoveStick.OnInputUpdated += MoveInputUpdated;
         _gameplayWidget.AimStick.OnInputUpdated += AimInputUpdated;
-        _viewCamera = Instantiate(_viewCameraPrefab);
+        _gameplayWidget.AimStick.OnInputClicked += SwitchWeapon;
+        _viewCamera = Instantiate(viewCameraPrefab);
         _viewCamera.SetFollowParent(transform);
 
+    }
+
+    private void SwitchWeapon()
+    {
+        _animator.SetTrigger(SwitchWeaponId);
+    }
+
+    public void AttackPoint()
+    {
+        _inventoryComponent.FireCurrentActiveWeapon();
+    }
+
+    public void WeaponSwitchPoint()
+    {
+        _inventoryComponent.EquipNextWeapon();
     }
 
     private void MoveInputUpdated(Vector2 inputVal)
@@ -42,12 +67,13 @@ public class Player : MonoBehaviour
     private void AimInputUpdated(Vector2 inputVal)
     {
         _aimInput = inputVal;
+        _animator.SetBool(FireID, _aimInput != Vector2.zero);
     }
 
     private void Update()
     {
         Vector3 moveDir = _viewCamera.InputToWorldDir( _moveInput );
-        _characterController.Move((moveDir) * (_playerSpeed * Time.deltaTime));
+        _characterController.Move((moveDir) * (playerSpeed * Time.deltaTime));
         
         Vector3 aimDir = _viewCamera.InputToWorldDir(_aimInput);
         if (aimDir == Vector3.zero)
@@ -65,7 +91,8 @@ public class Player : MonoBehaviour
             angleDelta = Vector3.SignedAngle(transform.forward,prevDir,Vector3.up);
         }
 
-        _animator.SetFloat(animTurnID, angleDelta / Time.deltaTime);
+        _animTurnSpeed = Mathf.Lerp(_animTurnSpeed, angleDelta/Time.deltaTime, Time.deltaTime * animTurnLerpScale);
+        _animator.SetFloat(animTurnID, _animTurnSpeed);
 
         float animFwdAmt = Vector3.Dot(moveDir, transform.forward);
         float animRgtAmt = Vector3.Dot(moveDir, transform.right);

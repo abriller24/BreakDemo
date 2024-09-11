@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 412c97eaf2344df43bc1ca29b9063cee
+timeCreated: 1499654326
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 95137
+  packageName: Revolver Base
+  packageVersion: 1.0
+  assetPath: Assets/OS_Weapon/Revolver/Default/Demo/RevolverDefaultDemo.unity
+  uploadId: 191826
