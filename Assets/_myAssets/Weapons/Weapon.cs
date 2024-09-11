@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -47,4 +48,6 @@ public abstract class Weapon : MonoBehaviour, ISocketInterface
     {
         return gameObject;
     }
+
+    public abstract void Attack();
 }

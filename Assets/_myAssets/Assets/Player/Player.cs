@@ -7,16 +7,16 @@ using UnityEngine;
 [RequireComponent(typeof(InventoryComponent))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameplayWidget _gameplayWidgetPrefab;
+    [SerializeField] private GameplayWidget gameplayWidgetPrefab;
     [SerializeField] private float playerSpeed = 10f;
     [SerializeField] private float bodyTurnSpeed = 10f;
-    [SerializeField] public ViewCamera viewCameraPrefab;
+    [SerializeField] private ViewCamera viewCameraPrefab;
 
     [SerializeField] private float animTurnLerpScale = 5.0f;
     private GameplayWidget _gameplayWidget;
     private CharacterController _characterController;
     private InventoryComponent _inventoryComponent;
-    public ViewCamera _viewCamera;
+    private ViewCamera _viewCamera;
 
     private Animator _animator;
     private float _animTurnSpeed;
@@ -27,13 +27,14 @@ public class Player : MonoBehaviour
     private static readonly int animRightID = Animator.StringToHash("RightAmt");
     private static readonly int animTurnID = Animator.StringToHash("TurnAmt");
     private static readonly int SwitchWeaponId = Animator.StringToHash("SwitchWeapon");
+    private static readonly int FireID = Animator.StringToHash("Firing");
 
     private void Awake() 
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
         _inventoryComponent = GetComponent<InventoryComponent>();
-        _gameplayWidget = Instantiate(_gameplayWidgetPrefab);
+        _gameplayWidget = Instantiate(gameplayWidgetPrefab);
         _gameplayWidget.MoveStick.OnInputUpdated += MoveInputUpdated;
         _gameplayWidget.AimStick.OnInputUpdated += AimInputUpdated;
         _gameplayWidget.AimStick.OnInputClicked += SwitchWeapon;
@@ -45,6 +46,11 @@ public class Player : MonoBehaviour
     private void SwitchWeapon()
     {
         _animator.SetTrigger(SwitchWeaponId);
+    }
+
+    public void AttackPoint()
+    {
+        _inventoryComponent.FireCurrentActiveWeapon();
     }
 
     public void WeaponSwitchPoint()
@@ -60,6 +66,7 @@ public class Player : MonoBehaviour
     private void AimInputUpdated(Vector2 inputVal)
     {
         _aimInput = inputVal;
+        _animator.SetBool(FireID, _aimInput != Vector2.zero);
     }
 
     private void Update()
