@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float animTurnLerpScale = 5.0f;
     private GameplayWidget _gameplayWidget;
     private CharacterController _characterController;
+    private InventoryComponent _inventoryComponent;
     public ViewCamera _viewCamera;
 
     private Animator _animator;
@@ -21,21 +23,33 @@ public class Player : MonoBehaviour
     private Vector2 _moveInput;
     private Vector2 _aimInput;
 
-    static int animFwdID = Animator.StringToHash("ForwardAmt");
-    static int animRightID = Animator.StringToHash("RightAmt");
-    static int animTurnID = Animator.StringToHash("TurnAmt");
-
+    private static readonly int animFwdID = Animator.StringToHash("ForwardAmt");
+    private static readonly int animRightID = Animator.StringToHash("RightAmt");
+    private static readonly int animTurnID = Animator.StringToHash("TurnAmt");
+    private static readonly int SwitchWeaponId = Animator.StringToHash("SwitchWeapon");
 
     private void Awake() 
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+        _inventoryComponent = GetComponent<InventoryComponent>();
         _gameplayWidget = Instantiate(_gameplayWidgetPrefab);
         _gameplayWidget.MoveStick.OnInputUpdated += MoveInputUpdated;
         _gameplayWidget.AimStick.OnInputUpdated += AimInputUpdated;
+        _gameplayWidget.AimStick.OnInputClicked += SwitchWeapon;
         _viewCamera = Instantiate(viewCameraPrefab);
         _viewCamera.SetFollowParent(transform);
 
+    }
+
+    private void SwitchWeapon()
+    {
+        _animator.SetTrigger(SwitchWeaponId);
+    }
+
+    public void WeaponSwitchPoint()
+    {
+        _inventoryComponent.EquipNextWeapon();
     }
 
     private void MoveInputUpdated(Vector2 inputVal)
