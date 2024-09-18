@@ -1,5 +1,19 @@
 using UnityEngine;
 
+public struct AimResult
+{
+    public GameObject target;
+    public Vector3 aimStart;
+    public Vector3 aimDir;
+
+    public AimResult(GameObject inTarget, Vector3 inAimStart,  Vector3 inAimDir)
+    {
+        target = inTarget;
+        aimStart = inAimStart;
+        aimDir = inAimDir;
+    }
+}
+
 public class AimingComponent : MonoBehaviour
 {
     [SerializeField] private Transform muzzle;
@@ -11,7 +25,7 @@ public class AimingComponent : MonoBehaviour
 
     Vector3 _debugAimStart;
     Vector3 _debugAimdir;
-    public GameObject GetAimTarget(Transform aimTransform = null)
+    public AimResult GetAimResult(Transform aimTransform = null)
     {
         Vector3 aimStart = muzzle.position;
         Vector3 aimDir = muzzle.forward;
@@ -30,11 +44,12 @@ public class AimingComponent : MonoBehaviour
         _debugAimStart = aimStart;
         _debugAimdir = aimDir;
 
+        GameObject target = null;
         if (Physics.Raycast(aimStart, aimDir, out RaycastHit hitInfo, aimRange, aimMask))
         {
-            return hitInfo.collider.gameObject;
+            target = hitInfo.collider.gameObject;
         }
-        return null;
+        return new AimResult(target, aimStart, aimDir);
     }
 
     private void OnDrawGizmos()
