@@ -4,7 +4,7 @@ using UnityEngine;
 public class HealthComponent : MonoBehaviour
 {
     public delegate void OnHealthChangedDelegate(float newHealth, float delta, float maxHealth, GameObject instigator);
-    public event OnHealthChangedDelegate OnHealthChanged;
+    public event OnHealthChangedDelegate OnManaChanged;
     public event OnHealthChangedDelegate OnTakenDamage;
     public event Action OnDead;
     
@@ -36,7 +36,7 @@ public class HealthComponent : MonoBehaviour
        {
           OnTakenDamage?.Invoke(_health, amt, maxHealth, instigator); 
        }
-       OnHealthChanged?.Invoke(_health, amt, maxHealth, instigator);
+       OnManaChanged?.Invoke(_health, amt, maxHealth, instigator);
        
        if (_health <= 0)
        {

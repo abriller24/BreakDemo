@@ -9,12 +9,15 @@ using UnityEngine;
 public class Player : MonoBehaviour, ITeamInterface, ICameraInterface
 {
     [SerializeField] private GameplayWidget gameplayWidgetPrefab;
+    [SerializeField] private AbilityWidget abilityWidgetPrefab;
     [SerializeField] private float speed = 10f;
     [SerializeField] private float bodyTurnSpeed = 10f;
     [SerializeField] private ViewCamera viewCameraPrefab;
     [SerializeField] private float animTurnLerpScale = 5f;
     [SerializeField] private int teamID = 0;
     private GameplayWidget _gameplayWidget;
+    private AbilityWidget _abilityWidget;
+    private MovementComponent _movementComponent;
     
     private CharacterController _characterController;
     private ViewCamera _viewCamera;
@@ -51,6 +54,8 @@ public class Player : MonoBehaviour, ITeamInterface, ICameraInterface
         _viewCamera.SetFollowParent(transform);
         _healthComponent = GetComponent<HealthComponent>();
         _healthComponent.OnDead += StartDeathSequence;
+        _abilityWidget = GetComponent<AbilityWidget>();
+        _movementComponent = GetComponent<MovementComponent>();
     }
 
     private void StartDeathSequence()
@@ -89,7 +94,7 @@ public class Player : MonoBehaviour, ITeamInterface, ICameraInterface
     void Update()
     {
         Vector3 moveDir = _viewCamera.InputToWorldDir(_moveInput);
-        _characterController.Move( moveDir * (speed * Time.deltaTime));
+        _characterController.Move( moveDir * (_movementComponent.MoveSpeed * Time.deltaTime));
 
         Vector3 aimDir = _viewCamera.InputToWorldDir(_aimInput);
         if (aimDir == Vector3.zero)

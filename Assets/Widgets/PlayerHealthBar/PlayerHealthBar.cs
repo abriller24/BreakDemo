@@ -12,7 +12,7 @@ public class PlayerHealthBar : Widget
         HealthComponent ownerHealthComp = newOwner.GetComponent<HealthComponent>();
         if (ownerHealthComp)
         {
-            ownerHealthComp.OnHealthChanged += UpdateHealth;
+            ownerHealthComp.OnManaChanged += UpdateHealth;
             UpdateHealth(ownerHealthComp.GetHealth(), 0, ownerHealthComp.GetMaxHealth(), newOwner);
         }
     }
@@ -20,6 +20,6 @@ public class PlayerHealthBar : Widget
     private void UpdateHealth(float newHealth, float delta, float maxHealth, GameObject instigator)
     {
         healthBarImage.fillAmount = newHealth / maxHealth;
-        valueText.text = $"{newHealth}/{maxHealth}";
+        valueText.text = $"{newHealth:F0}/{maxHealth:F0}";
     }
 }

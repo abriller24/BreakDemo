@@ -8,7 +8,7 @@ public class HealthBar : ValueGauge
         HealthComponent ownerHealthComponent = newOwner.GetComponent<HealthComponent>();
         if (ownerHealthComponent)
         {
-            ownerHealthComponent.OnHealthChanged += HealthChanged;
+            ownerHealthComponent.OnManaChanged += HealthChanged;
             ownerHealthComponent.OnDead += OwnerDead;
         }
     }
